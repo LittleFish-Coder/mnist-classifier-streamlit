@@ -1,6 +1,14 @@
 # MNIST Classifier
 
-This is a simple MNIST classifier using a simple neural network with CNN and fully connected layers. The model is trained using the MNIST dataset and the framework used is PyTorch.
+This is a simple MNIST classifier using a simple neural network with CNN and fully connected layers.
+
+The model is trained using the MNIST dataset and is written in PyTorch.
+
+The model is deployed using Streamlit.
+
+## Online Deployment
+
+You can use the online classsifier at [mnist-classifier]().
 
 ## Environment Setup
 
@@ -17,4 +25,12 @@ conda activate mnist-classifier
 
 ```bash
 pip install -r requirements.txt
+```
+
+## Run UI
+
+You can test the model using the streamlit app.
+
+```bash
+streamlit run app.py
 ```
