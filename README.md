@@ -8,7 +8,7 @@ The model is deployed using Streamlit.
 
 ## Online Deployment
 
-You can use the online classsifier at [mnist-classifier]().
+You can use the online classsifier at [mnist-classifier](https://littlefish-coder-mnist-classifier.streamlit.app/).
 
 ## Environment Setup
 
