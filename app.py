@@ -43,7 +43,7 @@ st.write(
 # Load the model
 def load_model():
     model = Model()
-    model.load_state_dict(torch.load("mnist.pth", map_location=torch.device("cpu")))
+    model.load_state_dict(torch.load("model/mnist.pth", map_location=torch.device("cpu")))
     model.eval()
     return model
 
