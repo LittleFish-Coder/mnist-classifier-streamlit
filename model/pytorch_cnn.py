@@ -35,11 +35,11 @@ class CNN(nn.Module):
         self.fc1 = nn.Linear(16 * 7 * 7, num_classes)
 
     def forward(self, x):
-        x = F.relu(self.conv1(x))  # 8*28*28
-        x = self.pool(x)  # 8*14*14
-        x = F.relu(self.conv2(x))  # 16*14*14
-        x = self.pool(x)  # 16*7*7
-        x = x.reshape(x.shape[0], -1)  # (16, 7, 7) -> (16*7*7)
+        x = F.relu(self.conv1(x))  # (batch, 8, 28, 28)
+        x = self.pool(x)  # (batch, 8, 14, 14)
+        x = F.relu(self.conv2(x))  # (batch, 16, 14, 14)
+        x = self.pool(x)  # (batch, 16, 7, 7)
+        x = x.reshape(x.shape[0], -1)  # (batch, 16, 7, 7) -> (batch, 16*7*7)
         # x = x.view(x.size(0), -1) # same effect as above code
         x = self.fc1(x)
         return x
@@ -72,23 +72,25 @@ model = CNN().to(device)
 criterion = nn.CrossEntropyLoss()
 optimizer = optim.Adam(model.parameters(), lr=learning_rate)
 
-# train network
-for epoch in range(num_epochs):
-    for batch_id, (data, targets) in enumerate(tqdm(train_loader)):
-        # get data to cuda if possible
-        data = data.to(device=device)  # torch.Size([64, 1, 28, 28])
-        targets = targets.to(device=device)  # torch.Size([64])
 
-        # forward pass
-        outputs = model(data)
-        loss = criterion(outputs, targets)
+def train_network():
+    # train network
+    for epoch in range(num_epochs):
+        for batch_id, (data, targets) in enumerate(tqdm(train_loader)):
+            # get data to cuda if possible
+            data = data.to(device=device)  # torch.Size([64, 1, 28, 28])
+            targets = targets.to(device=device)  # torch.Size([64])
 
-        # backward propagation
-        optimizer.zero_grad()
-        loss.backward()
+            # forward pass
+            outputs = model(data)
+            loss = criterion(outputs, targets)
 
-        # gradient descent or adam step
-        optimizer.step()
+            # backward propagation
+            optimizer.zero_grad()
+            loss.backward()
+
+            # gradient descent or adam step
+            optimizer.step()
 
 
 # test network (check accuracy on test set)
@@ -128,6 +130,8 @@ def save_model(model):
     torch.save(model, file_path)
 
 
-check_accuracy(train_loader, model)
-check_accuracy(test_loader, model)
-save_model(model)
+if __name__ == "__main__":
+    train_network()
+    check_accuracy(train_loader, model)
+    check_accuracy(test_loader, model)
+    save_model(model)

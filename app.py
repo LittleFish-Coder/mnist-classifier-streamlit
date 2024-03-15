@@ -4,6 +4,8 @@ import cv2
 import numpy as np
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
+from model.pytorch_cnn import CNN
 
 
 # define the CNN model
@@ -42,8 +44,7 @@ st.write(
 
 # Load the model
 def load_model():
-    model = Model()
-    model.load_state_dict(torch.load("model/mnist.pth", map_location=torch.device("cpu")))
+    model = torch.load("model/mnist_CNN.pth", map_location=torch.device("cpu"))
     model.eval()
     return model
 
@@ -52,12 +53,12 @@ model = load_model()
 
 # Add the canvas component
 canvas_result = st_canvas(
-    fill_color="rgba(255, 165, 0, 0.3)",  # Fixed fill color with some opacity
-    stroke_width=10,
-    stroke_color="black",
-    background_color="#fff",
-    width=150,
-    height=150,
+    fill_color="rgba(255, 255, 255, 1)",  # Fixed fill color with some opacity
+    stroke_width=15,
+    stroke_color="white",
+    background_color="black",
+    width=280,
+    height=280,
     drawing_mode="freedraw",
     key="canvas",
 )
@@ -73,11 +74,24 @@ if st.button("Recognize"):
     # convert the image to grayscale
     gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)  # (28, 28)
 
-    # convert the image to a tensor
-    gray_img = torch.tensor(gray_img).unsqueeze(0).float()  # torch.Size([1, 28, 28])
+    # show the image
+    st.image(gray_img, width=150)
+
+    # convert the image to a tensor -> # torch.Size([1, 1, 28, 28])
+    gray_img = torch.tensor(gray_img).unsqueeze(0).unsqueeze(0).float()
 
     # Make the prediction
     prediction = model(gray_img)
+    print(prediction)
+
+    # show the bar chart
+    hist_values = F.softmax(prediction).detach().numpy().flatten().tolist()
+    hist_labels = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+    data = dict(zip(hist_labels, hist_values))
+    st.bar_chart(data)
+
     prediction = torch.argmax(prediction, dim=1)  # return 1d tensor
     prediction = prediction.item()  # return the value as a number
+    print(prediction)
+
     st.write(f"Prediction: {prediction}")
