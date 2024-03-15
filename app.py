@@ -44,7 +44,7 @@ st.write(
 
 # Load the model
 def load_model():
-    model = torch.load("/model/mnist_cnn.pth", map_location=torch.device("cpu"))
+    model = torch.load("model/mnist_cnn.pth", map_location=torch.device("cpu"))
     model.eval()
     return model
 
