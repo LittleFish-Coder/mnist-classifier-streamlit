@@ -15,31 +15,6 @@ st.set_page_config(
 )
 
 
-# define the CNN model
-class Model(nn.Module):
-    def __init__(self):
-        super(Model, self).__init__()
-        self.conv1 = nn.Conv2d(1, 32, kernel_size=3, stride=1, padding=1)
-        self.conv2 = nn.Conv2d(32, 64, kernel_size=3, stride=1, padding=1)
-        self.fc1 = nn.Linear(64 * 7 * 7, 128)
-        self.fc2 = nn.Linear(128, 10)
-        self.dropout = nn.Dropout(0.5)
-        self.maxpool = nn.MaxPool2d(kernel_size=2, stride=2)
-        self.relu = nn.ReLU()
-        self.softmax = nn.Softmax(dim=1)
-
-    def forward(self, x):
-        x = self.relu(self.conv1(x))
-        x = self.maxpool(x)
-        x = self.relu(self.conv2(x))
-        x = self.maxpool(x)
-        x = x.view(-1, 64 * 7 * 7)
-        x = self.relu(self.fc1(x))
-        x = self.dropout(x)
-        x = self.fc2(x)
-        return self.softmax(x)
-
-
 st.title("MNIST Handwritten Digit Recognition")
 st.write("This is a simple web app to recognize handwritten digits using a simple model trained on the MNIST dataset.")
 st.write("Please draw a digit between 0 and 9 and click on the 'Recognize' button to see the prediction.")
@@ -47,7 +22,10 @@ st.write("Please draw a digit between 0 and 9 and click on the 'Recognize' butto
 
 # Load the model
 def load_model():
-    model = torch.load("model/mnist_cnn.pth", map_location=torch.device("cpu"))
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+    model = CNN()
+    checkpoint = torch.load("model/mnist_cnn.pth", map_location=torch.device(device))
+    model.load_state_dict(checkpoint["state_dict"])
     model.eval()
     return model
 
@@ -56,8 +34,8 @@ model = load_model()
 
 # Add the canvas component
 canvas_result = st_canvas(
-    fill_color="rgba(255, 255, 255, 1)",  # Fixed fill color with some opacity
-    stroke_width=15,
+    fill_color="rgba(255, 255, 255, 0)",  # Fixed fill color with some opacity
+    stroke_width=10,
     stroke_color="white",
     background_color="black",
     width=280,
@@ -72,29 +50,34 @@ if st.button("Recognize"):
     img = canvas_result.image_data.astype(np.uint8)
 
     # resize the image to 28x28
-    img = cv2.resize(img, (28, 28))  # (28, 28, 4)
+    img = cv2.resize(img, (28, 28))  # img.shape: (28, 28, 4)
 
     # convert the image to grayscale
-    gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)  # (28, 28)
+    gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)  # img.shape: (28, 28)
 
     # show the image
-    st.image(gray_img, width=150)
+    st.image(gray_img, width=28)
 
     # convert the image to a tensor -> # torch.Size([1, 1, 28, 28])
-    gray_img = torch.tensor(gray_img).unsqueeze(0).unsqueeze(0).float()
+    tensor_img = torch.tensor(gray_img)  # torch.Size([28, 28])
+    tensor_img = tensor_img.unsqueeze(0)  # torch.Size([1, 28, 28])
+    tensor_img = tensor_img.unsqueeze(0).float()  # torch.Size([1, 1, 28, 28])
 
     # Make the prediction
-    prediction = model(gray_img)
-    print(prediction)
+    prediction = model(tensor_img)
+    # print(f"Prediction Probabilities: {prediction}")
+
+    # softmax
+    prediction = F.softmax(prediction, dim=1)  # normalize the prediction
+    print(f"Prediction Probabilities: {prediction}")
 
     # show the bar chart
-    hist_values = F.softmax(prediction).detach().numpy().flatten().tolist()
+    hist_values = prediction.detach().numpy().flatten().tolist()
     hist_labels = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
     data = dict(zip(hist_labels, hist_values))
     st.bar_chart(data)
 
     prediction = torch.argmax(prediction, dim=1)  # return 1d tensor
     prediction = prediction.item()  # return the value as a number
-    print(prediction)
-
+    print(f"Prediction: {prediction}")
     st.write(f"Prediction: {prediction}")
