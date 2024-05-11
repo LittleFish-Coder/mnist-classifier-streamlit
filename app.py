@@ -35,7 +35,7 @@ model = load_model()
 # Add the canvas component
 canvas_result = st_canvas(
     fill_color="rgba(255, 255, 255, 0)",  # Fixed fill color with some opacity
-    stroke_width=10,
+    stroke_width=15,
     stroke_color="white",
     background_color="black",
     width=280,
