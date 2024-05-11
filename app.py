@@ -7,6 +7,13 @@ import torch.nn as nn
 import torch.nn.functional as F
 from model.pytorch_cnn import CNN
 
+# Set page config
+st.set_page_config(
+    page_title="MNIST Classifier",
+    page_icon="🔢",
+    layout="wide",
+)
+
 
 # define the CNN model
 class Model(nn.Module):
@@ -34,12 +41,8 @@ class Model(nn.Module):
 
 
 st.title("MNIST Handwritten Digit Recognition")
-st.write(
-    "This is a simple web app to recognize handwritten digits using a simple model trained on the MNIST dataset."
-)
-st.write(
-    "Please draw a digit between 0 and 9 and click on the 'Recognize' button to see the prediction."
-)
+st.write("This is a simple web app to recognize handwritten digits using a simple model trained on the MNIST dataset.")
+st.write("Please draw a digit between 0 and 9 and click on the 'Recognize' button to see the prediction.")
 
 
 # Load the model
