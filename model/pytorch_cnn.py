@@ -64,6 +64,14 @@ def check_accuracy(loader, model):
         return accuracy
 
 
+# save model
+def save_checkpoint(model, optimizer, filename="mnist_cnn.pth"):
+    print("=> Saving checkpoint")
+    checkpoint = {"state_dict": model.state_dict(), "optimizer": optimizer.state_dict()}
+    torch.save(checkpoint, filename)
+    print("=> Checkpoint saved")
+
+
 if __name__ == "__main__":
     # debug test
     # model = CNN(28, 10)
@@ -80,8 +88,8 @@ if __name__ == "__main__":
     num_epochs = 5
 
     # load dataset
-    train_dataset = datasets.MNIST(root="dataset/", train=True, transform=transforms.ToTensor(), download=True)
-    test_dataset = datasets.MNIST(root="dataset/", train=False, transform=transforms.ToTensor(), download=True)
+    train_dataset = datasets.MNIST(root="../dataset/", train=True, transform=transforms.ToTensor(), download=True)
+    test_dataset = datasets.MNIST(root="../dataset/", train=False, transform=transforms.ToTensor(), download=True)
 
     # dataloader
     train_loader = DataLoader(dataset=train_dataset, batch_size=batch_size, shuffle=True)
@@ -117,3 +125,4 @@ if __name__ == "__main__":
 
     check_accuracy(train_loader, model)
     check_accuracy(test_loader, model)
+    save_checkpoint(model, optimizer)  # save the model
