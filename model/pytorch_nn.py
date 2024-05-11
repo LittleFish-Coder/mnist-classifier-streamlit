@@ -19,7 +19,7 @@ class NN(nn.Module):
         x = self.fc1(x)
         x = F.relu(x)
         x = self.fc2(x)
-        # x = F.softmax(x)
+        x = F.softmax(x)
         return x
 
 
@@ -56,11 +56,11 @@ def check_accuracy(loader, model):
 
 if __name__ == "__main__":
     # debug test
-    model = NN(784, 10)
-    x = torch.randn(64, 784)
-    output = model(x)
-    print(output)
-    print(output.shape)
+    # model = NN(784, 10)
+    # x = torch.randn(64, 784)
+    # output = model(x)
+    # print(output)
+    # print(output.shape)
 
     # hyperparameters
     input_size = 28 * 28
