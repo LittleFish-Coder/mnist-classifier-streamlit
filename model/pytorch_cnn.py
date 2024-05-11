@@ -59,8 +59,8 @@ def check_accuracy(loader, model):
         accuracy = float(num_correct) / float(num_samples)
         print(f"Get {num_correct}/{num_samples} with accuracy {accuracy*100: .2f}%")
 
-        model.train()
-        return accuracy
+    model.train()
+    return accuracy
 
 
 # save model
