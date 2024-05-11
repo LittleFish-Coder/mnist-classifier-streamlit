@@ -29,8 +29,7 @@ class CNN(nn.Module):
         x = F.relu(x)
         x = self.pool(x)  # [64, 16, 11, 11] -> [64, 16, 5, 5]
         x = x.reshape(x.shape[0], -1)  # [64, 16, 5, 5] -> [64, 400]
-        x = self.fc1(x)
-        x = F.softmax(x, dim=1)
+        x = self.fc1(x)  # [64, 400] -> [64, 10]
         return x
 
 
