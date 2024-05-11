@@ -84,7 +84,7 @@ if __name__ == "__main__":
     num_classes = 10
     learning_rate = 1e-3
     batch_size = 64
-    num_epochs = 5
+    num_epochs = 10
 
     # load dataset
     train_dataset = datasets.MNIST(root="../dataset/", train=True, transform=transforms.ToTensor(), download=True)
