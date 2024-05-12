@@ -50,13 +50,13 @@ if st.button("Recognize"):
     img = canvas_result.image_data.astype(np.uint8)
 
     # resize the image to 28x28
-    img = cv2.resize(img, (28, 28))  # img.shape: (28, 28, 4)
+    img = cv2.resize(img, (28, 28), interpolation=cv2.INTER_NEAREST)  # img.shape: (28, 28, 4)
 
     # convert the image to grayscale
     gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)  # img.shape: (28, 28)
 
     # show the image
-    st.image(gray_img, width=28)
+    st.image(gray_img, width=200, caption="Your Drawing")
 
     # convert the image to a tensor -> # torch.Size([1, 1, 28, 28])
     tensor_img = torch.tensor(gray_img)  # torch.Size([28, 28])
